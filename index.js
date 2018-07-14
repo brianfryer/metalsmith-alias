@@ -1,12 +1,12 @@
 /* eslint-env node */
 var path = require('path');
 
-var createRedirectPage = function(destination) {
-  // Make sure path is absolute
+var createRedirectPage = function(destination, HTMLtemplate) {
+  // Make sure path is absolute,
   var href = destination[0] === '/' ? destination : '/' + destination;
 
   // Minimal, but valid, HTML
-  return `<!doctype html><meta http-equiv=refresh content="0; url=${href}"><link rel=canonical href="${href}"><title>Page Moved</title>New location: <a href="${href}">${href}</a>`;
+  return (HTMLtemplate) ? HTMLtemplate : `<!doctype html><meta http-equiv=refresh content="0; url=${href}"><link rel=canonical href="${href}"><title>Page Moved</title>New location: <a href="${href}">${href}</a>`;
 };
 
 var NETLIFY_REDIRECTS_FILE_PATH = '_redirects';
@@ -23,7 +23,7 @@ module.exports = function(options) {
 
       const destination = 'path' in data ? data.path : file;
       const redirectPage = {
-        contents: new Buffer(createRedirectPage(destination)),
+        contents: new Buffer(createRedirectPage(destination, options.HTMLtemplate)),
       };
 
       data.alias.forEach(alias => {
